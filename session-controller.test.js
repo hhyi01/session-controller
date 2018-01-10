@@ -50,7 +50,7 @@ test('Submit overlapping touches', () => {
   // Get most recent session after both events have timed out
   const test3Session1 = controller.getSessions(new Date('2017-12-12 18:05:00')).pop();
   // Assert most recent session starts at the same time of first touch event
-  expect(test3Session1.sessionStart).toBe(JSON.stringify(test3Timestamp1));
+  expect(JSON.stringify(test3Session1.sessionStart)).toBe(JSON.stringify(test3Timestamp1));
   // Assert most recent session ends at the expiration time of second touch event
   expect(JSON.stringify(test3Session1.sessionEnd)).toBe(JSON.stringify(test3Event2Expiration));
   // Add session back to history
@@ -80,7 +80,7 @@ test('Check does not expire', () => {
   const lastSession = controller.getSessions(new Date('2017-12-13 18:11:00')).pop();
   // Assert that last session is closed
   // last session start should match timestamp of CHECK_OPEN event
-  expect(lastSession.sessionStart).toBe(JSON.stringify(test4Timestamp1));
+  expect(JSON.stringify(lastSession.sessionStart)).toBe(JSON.stringify(test4Timestamp1));
   // last session end should match timestamp of CHECK_CLOSE event
   expect(JSON.stringify(lastSession.sessionEnd)).toBe(JSON.stringify(test4Timestamp2));
   // Add last session back to history
@@ -92,11 +92,17 @@ test('Create session without timestamp', () => {
   const test5Event1 = { name: 'SWIPE', timeout: 5 };
   controller.addEvent(test5Event1);
   const test5Session1 = controller.getCurrentSession();
-  // Assert that current (session5) is not empty
+  // Assert that current is not empty
   expect(Object.keys(test5Session1).length !== 0).toBe(true);
-  // Assert test 5 is on the right session
-  expect(test5Session1.sessionId).toBe('session5');
 });
+
+// Create test for each method in isolation for expected behavior?
+
+// Stress code - 
+  // a thousand overlapping touch events?
+  // a check_open plus a thousand overlapping touch events?
+  // a series of timed out touch events?
+
 
 
 

@@ -1,4 +1,5 @@
 // SessionController
+var uuid = require('uuid4'); 
 
 var SessionController = function() {
   this.session = {};
@@ -42,11 +43,14 @@ SessionController.prototype.getSessions = function(timestamp) {
 
 SessionController.prototype.createSession = function(timestamp) {
   // if this.session is empty
-  // create sessionId for this.session, create sessionStart with new Date,
+  // create sessionId (using uuid4 id generator) for this.session, 
+  // create sessionStart with new Date,
   // create sessionEnd with null as placeholder/active session
+  var id = uuid();
+  var currentTime = this.setCurrentTime(timestamp);
   this.session = {
-    sessionId: 'session' + this.sessionHistory.length,
-    sessionStart: JSON.stringify(timestamp),
+    sessionId: id,
+    sessionStart: currentTime,
     sessionEnd: null
   }
 };
