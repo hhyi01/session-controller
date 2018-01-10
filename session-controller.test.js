@@ -98,7 +98,6 @@ test('Create session without timestamp', () => {
 });
 
 // Create test for each method in isolation for expected behavior?
-// expected input types
 
 // Test 6 - addEvent(event, timestamp)
 test('Added event shows in session controller\'s event object', () => {
@@ -106,7 +105,7 @@ test('Added event shows in session controller\'s event object', () => {
   const test6Event1 = { name: 'SWIPE', timeout: 5 };
   test6Controller.addEvent(test6Event1);
   expect(test6Controller.event.hasOwnProperty('SWIPE')).toBe(true);
-})
+});
 
 // Test 7 - getCurrentSession(timestamp)
 test('Current session returns expected session', () => {
@@ -119,7 +118,7 @@ test('Current session returns expected session', () => {
   test7Controller.session = test7FakeSession;
   const test7Session = test7Controller.getCurrentSession();
   expect(JSON.stringify(test7Session)).toBe(JSON.stringify(test7FakeSession));
-})
+});
 
 // Test 8 - getSessions(timestamp)
 test('Get sessions returns expected history', () => {
@@ -136,7 +135,7 @@ test('Get sessions returns expected history', () => {
   const test8History = test8Controller.getSessions(new Date('2017-12-12 19:12:00'));
   expect(test8History.length).toBe(3);
   expect(JSON.stringify(test8Controller.sessionHistory)).toBe(JSON.stringify(test8History));
-})
+});
 
 // Test 9 - createSession(timestamp)
 test('Create session creates new session', () => {
@@ -144,25 +143,59 @@ test('Create session creates new session', () => {
   expect(Object.keys(test9Controller.session).length === 0).toBe(true);
   test9Controller.createSession();
   expect(Object.keys(test9Controller.session).length !== 0).toBe(true);
-})
+});
 
 // Test 10 - setExpiration(timestamp, timeout)
 test('Set expiration returns date object with timestamp plus event timeout', () => {
   const test10Controller = new SessionController();
   const test10Expiration = test10Controller.setExpiration(new Date('2017-12-12 19:12:00'), 5);
   expect(JSON.stringify(test10Expiration)).toBe(JSON.stringify(new Date('2017-12-12 19:17:00')))
-})
+});
 
 // Test 11 - setCurrentTime(timestamp)
-
+test('Set current time returns expected timestamp', () => {
+  const test11Controller = new SessionController();
+  const test11Date1 = new Date('2017-12-12 19:12:00');
+  const test11CurrentTime = test11Controller.setCurrentTime(test11Date1);
+  expect(JSON.stringify(test11CurrentTime)).toBe(JSON.stringify(test11Date1));
+});
 
 // Test 12 - validateSession(timestamp)
+test('Validate session confirms current session', () => {
+  const test12Controller = new SessionController();
+  test12Controller.event.SWIPE = new Date('2017-12-12 17:55:00');
+  test12Controller.session = { sessionId: uuid(), 
+    sessionStart: new Date('2017-12-12 17:50:00'), 
+    sessionEnd: null };
+  // Validate session after timed out touch event
+  test12Controller.validateSession(new Date('2017-12-12 17:56:00'));
+  // This session should have sessionEnd time now
+  const test12LastSession = test12Controller.sessionHistory.pop();
+  expect(JSON.stringify(test12LastSession.sessionEnd)).toBe(JSON.stringify(new Date('2017-12-12 17:55:00')));
+  test12Controller.validateSession(new Date('2017-12-12 18:00:00'));
+  // Should create new session
+  expect(Object.keys(test12Controller.session).length !== 0).toBe(true);
+});
 
 // Test 13 - closeSession(maxTimeout, timestamp)
+test('Close session closes session as expected', () => {
+  const test13Controller = new SessionController();
+  test13Controller.event.SWIPE = new Date('2017-12-12 17:55:00');
+  test13Controller.session = { sessionId: uuid(), 
+    sessionStart: new Date('2017-12-12 17:50:00'), 
+    sessionEnd: null };  
+  test13Controller.closeSession(test13Controller.event.SWIPE, new Date('2017-12-12 17:53:00'));
+  // Session should still be open
+  expect(JSON.stringify(test13Controller.session.sessionEnd)).toBe('null');
+  test13Controller.closeSession(new Date('2017-12-12 17:56:00'));
+  // Session should be closed
+  expect(Object.keys(test13Controller.session).length === 0).toBe(true);
+});
 
 // Stress code -
 
 // Test 14 - a thousand overlapping touch events?
+
 
 // Test 15 - a check_open plus a thousand overlapping touch events?
 
