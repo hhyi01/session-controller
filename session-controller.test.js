@@ -1,6 +1,7 @@
 const SessionController = require('./session-controller.js').SessionController;
+const uuid = require('uuid4');
 
-var controller = new SessionController();
+const controller = new SessionController();
 
 // Test 1
 test('Test 1: Submit a touch event', () => {
@@ -97,13 +98,63 @@ test('Create session without timestamp', () => {
 });
 
 // Create test for each method in isolation for expected behavior?
+// expected input types
 
-// Stress code - 
-  // a thousand overlapping touch events?
-  // a check_open plus a thousand overlapping touch events?
-  // a series of timed out touch events?
+// Test 6 - addEvent(event, timestamp)
+test('Added event shows in session controller\'s event object', () => {
+  const test6Controller = new SessionController();
+  const test6Event1 = { name: 'SWIPE', timeout: 5 };
+  test6Controller.addEvent(test6Event1);
+  expect(test6Controller.event.hasOwnProperty('SWIPE')).toBe(true);
+})
 
+// Test 7 - getCurrentSession(timestamp)
+test('Current session returns expected session', () => {
+  const test7Controller = new SessionController();
+  const test7FakeSession = {
+    sessionId: uuid(),
+    sessionStart: new Date(),
+    sessionEnd: null
+  };
+  test7Controller.session = test7FakeSession;
+  const test7Session = test7Controller.getCurrentSession();
+  expect(JSON.stringify(test7Session)).toBe(JSON.stringify(test7FakeSession));
+})
 
+// Test 8 - getSessions(timestamp)
+test('Get sessions returns expected history', () => {
+  const test8Controller = new SessionController();
+  test8Controller.sessionHistory.push({ sessionId: uuid(), 
+    sessionStart: new Date('2017-12-12 17:50:00'), 
+    sessionEnd: new Date('2017-12-12 17:55:00') });
+  test8Controller.sessionHistory.push({ sessionId: uuid(), 
+    sessionStart: new Date('2017-12-12 18:00:00'), 
+    sessionEnd: new Date('2017-12-12 18:50:00') });
+  test8Controller.sessionHistory.push({ sessionId: uuid(), 
+    sessionStart: new Date('2017-12-12 19:00:00'), 
+    sessionEnd: new Date('2017-12-12 19:10:00') });
+  const test8History = test8Controller.getSessions(new Date('2017-12-12 19:12:00'));
+  expect(test8History.length).toBe(3);
+  expect(JSON.stringify(test8Controller.sessionHistory)).toBe(JSON.stringify(test8History));
+})
+
+// Test 9 - createSession(timestamp)
+
+// Test 10 - setExpiration(timestamp, timeout)
+
+// Test 11 - setCurrentTime(timestamp)
+
+// Test 12 - validateSession(timestamp)
+
+// Test 13 - closeSession(maxTimeout, timestamp)
+
+// Stress code -
+
+// Test 14 - a thousand overlapping touch events?
+
+// Test 15 - a check_open plus a thousand overlapping touch events?
+
+// Test 16 - a series of timed out touch events?
 
 
 
