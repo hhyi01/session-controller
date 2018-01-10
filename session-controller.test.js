@@ -139,10 +139,22 @@ test('Get sessions returns expected history', () => {
 })
 
 // Test 9 - createSession(timestamp)
+test('Create session creates new session', () => {
+  const test9Controller = new SessionController();
+  expect(Object.keys(test9Controller.session).length === 0).toBe(true);
+  test9Controller.createSession();
+  expect(Object.keys(test9Controller.session).length !== 0).toBe(true);
+})
 
 // Test 10 - setExpiration(timestamp, timeout)
+test('Set expiration returns date object with timestamp plus event timeout', () => {
+  const test10Controller = new SessionController();
+  const test10Expiration = test10Controller.setExpiration(new Date('2017-12-12 19:12:00'), 5);
+  expect(JSON.stringify(test10Expiration)).toBe(JSON.stringify(new Date('2017-12-12 19:17:00')))
+})
 
 // Test 11 - setCurrentTime(timestamp)
+
 
 // Test 12 - validateSession(timestamp)
 
