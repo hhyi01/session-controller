@@ -192,10 +192,21 @@ test('Close session closes session as expected', () => {
   expect(Object.keys(test13Controller.session).length === 0).toBe(true);
 });
 
-// Stress code -
-
 // Test 14 - a thousand overlapping touch events?
-
+test('A thousand overlapping touch events yields one session', () => {
+  const test14Controller = new SessionController();
+  let startTime = new Date('2017-12-12 17:53:00');
+  for (let i = 0; i < 1000; i++) {
+    let ti = 4 + Math.floor(Math.random() * 3); // timeout should be between 4 and 7 minutes
+    const test14Event = { name: 'SWIPE', timeout: ti };
+    test14Controller.addEvent(test14Event, startTime);
+    let interval = 2 + Math.floor(Math.random() * 2); // touch event every 2-4 minutes
+    startTime = test14Controller.setExpiration(startTime, interval);
+  }
+  // There should only be one long session in session history
+  const test14History = test14Controller.getSessions();
+  expect(test14History.length).toBe(1);
+});
 
 // Test 15 - a check_open plus a thousand overlapping touch events?
 

@@ -89,7 +89,6 @@ SessionController.prototype.closeSession = function(maxTimeout, timestamp) {
   var noCheckOpenOrClosed = !this.event.hasOwnProperty('CHECK_OPEN') && !this.event.hasOwnProperty('CHECK_CLOSE');
   var checkOpenAndClosed = this.event.hasOwnProperty('CHECK_OPEN') && this.event.hasOwnProperty('CHECK_CLOSE');
   var currentTime = this.setCurrentTime(timestamp);
-  console.log('what happens here ', maxTimeout < currentTime, maxTimeout, currentTime)
   if (maxTimeout < currentTime) {
     if (noCheckOpenOrClosed || checkOpenAndClosed) {
       this.session.sessionEnd = new Date(maxTimeout);
