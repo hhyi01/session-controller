@@ -11,11 +11,7 @@ SessionController.prototype.addEvent = function(event, timestamp) {
   // event object = { name: 'event name', timeout: 'duration in minutes or -1' }
   // keep track of added events in this.event
   var currentTime = this.setCurrentTime(timestamp);
-  if (Object.keys(this.session).length !== 0) {
-    this.validateSession(currentTime);
-  } else {
-    this.createSession(currentTime);
-  } 
+  this.validateSession(currentTime);
   if (this.event.hasOwnProperty(event.name)) {
     if (this.event[event.name] !== -1) {
       // if event name already exists and timeout !== -1, replace expiration
@@ -29,6 +25,7 @@ SessionController.prototype.addEvent = function(event, timestamp) {
       this.event[event.name] = event.timeout;
     }
   }
+  this.validateSession(currentTime);
 };
 
 SessionController.prototype.getCurrentSession = function(timestamp) {

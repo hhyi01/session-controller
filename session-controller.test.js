@@ -209,8 +209,45 @@ test('A thousand overlapping touch events yields one session', () => {
 });
 
 // Test 15 - a check_open plus a thousand overlapping touch events?
+test('A check open with a thousand touch events yields one ongoing session', () => {
+  const test15Controller = new SessionController();
+  let startTime2 = new Date('2017-12-12 17:53:00');
+  for (let i = 0; i < 1000; i++) {
+    if (i === 2) {
+      const test15Event1 = { name: 'CHECK_OPEN', timeout: -1 };
+      test15Controller.addEvent(test15Event1, startTime2); // add check open event
+    } else {
+      let ti2 = 4 + Math.floor(Math.random() * 3); // timeout should be between 4 and 7 minutes
+      const test15Event2 = { name: 'SWIPE', timeout: ti2 };
+      test15Controller.addEvent(test15Event2, startTime2);
+      let interval2 = 2 + Math.floor(Math.random() * 2); // touch event every 2-4 minutes
+      startTime2 = test15Controller.setExpiration(startTime2, interval2);
+    }
+  }
+  // There should be one current session 
+  const test15Session = test15Controller.getCurrentSession();
+  expect(Object.keys(test15Session).lenth !== 0).toBe(true);
+  // Current session should have no end time
+  expect(JSON.stringify(test15Session.sessionEnd)).toBe('null');
+  const test15History = test15Controller.getSessions();
+  // There should be no history available
+  expect(test15History.length).toBe(0);  
+});
 
 // Test 16 - a series of timed out touch events?
+test('A series of 1000 timed out touch events yields 1000 sessions', () => {
+  const test16Controller = new SessionController();
+  let startTime3 = new Date('2017-12-12 17:53:00');
+  for (let i = 0; i < 1000; i++) {
+    let ti3 = 2 + Math.floor(Math.random() * 3); // timeout should be between 2 and 5 minutes
+    const test16Event = { name: 'SWIPE', timeout: ti3 };
+    test16Controller.addEvent(test16Event, startTime3);
+    let interval3 = 8 + Math.floor(Math.random() * 2); // touch event every 8-10 minutes
+    startTime3 = test16Controller.setExpiration(startTime3, interval3);
+  }  
+  const test16History = test16Controller.getSessions();
+  expect(test16History.length).toBe(1000);
+});
 
 
 
