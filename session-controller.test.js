@@ -226,7 +226,7 @@ test('A check open with a thousand touch events yields one ongoing session', () 
   }
   // There should be one current session 
   const test15Session = test15Controller.getCurrentSession();
-  expect(Object.keys(test15Session).lenth !== 0).toBe(true);
+  expect(Object.keys(test15Session).length !== 0).toBe(true);
   // Current session should have no end time
   expect(JSON.stringify(test15Session.sessionEnd)).toBe('null');
   const test15History = test15Controller.getSessions();
